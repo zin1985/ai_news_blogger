@@ -4,7 +4,7 @@ from post_to_blogger import post_article
 
 def main():
     articles = get_latest_ai_news()
-    for article in articles:
+    for article in articles[:1]:
         summary = summarize_article(article['content'])
         post_article(title=article['title'], content=summary, url=article['url'])
 
