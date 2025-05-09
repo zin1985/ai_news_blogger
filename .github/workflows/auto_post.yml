@@ -1,8 +1,8 @@
-name: Auto AI News Blogger
+name: Auto AI News Blogger with Gist
 
 on:
   schedule:
-    - cron: '0 8 * * *'  # JST 17:00 実行（UTC 8:00）
+    - cron: '0 8 * * *'  # JST 17:00 相当
   workflow_dispatch:
 
 jobs:
@@ -15,6 +15,8 @@ jobs:
       BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
       BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
       BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      GIST_ID: ${{ secrets.GIST_ID }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
