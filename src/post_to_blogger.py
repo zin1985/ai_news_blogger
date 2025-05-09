@@ -1,6 +1,7 @@
 import os
 from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
+from post_to_blogger import post_article
 from openai import OpenAI
 
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
