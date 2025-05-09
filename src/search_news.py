@@ -23,7 +23,10 @@ def get_page_text_with_selenium(url):
         time.sleep(3)
         paragraphs = driver.find_elements(By.TAG_NAME, "p")
         text = "\n".join([p.text for p in paragraphs])
-        return text.strip()[:4000]
+        short_text = text.strip()[:4000]
+        print("$D83D$DCC4 取得した本文プレビュー（先頭200文字）:")
+        print(short_text[:200] + "..." if len(short_text) > 200 else short_text)
+        return short_text
     except Exception as e:
         print(f"⚠️ Selenium取得失敗: {e}")
         return ""
@@ -109,16 +112,34 @@ def insert_html_wrappers(title, url, body):
     return "\n".join(new_lines)
 
 def get_latest_ai_news():
-    query_text = "OpenAI is in discussion with FDA about using AI in medicine approval processes. This could accelerate drug reviews in the United States."
-    url = "https://example.com/fda-ai-news"
-    title_en = "OpenAI in talks with FDA to use AI for faster drug approval"
-    full_text = query_text
-    rewritten = rewrite_with_comments(full_text)
-    wrapped = insert_html_wrappers(title_en, url, rewritten)
-    title_ja = translate_title_to_japanese(title_en)
-    final_title = f"『{title_ja}』を委員長ちゃんが解説♪"
-    return [{
-        "title": final_title,
-        "url": url,
-        "content": wrapped
-    }]
+    query = "OpenAI FDA AI site:reuters.com OR site:cnn.com OR site:nytimes.com OR site:bbc.com"
+    url = f"https://www.googleapis.com/customsearch/v1?key={SEARCH_API_KEY}&cx={SEARCH_ENGINE_ID}&q={query}"
+
+    try:
+        res = requests.get(url)
+        res.raise_for_status()
+        items = res.json().get("items", [])
+    except Exception as e:
+        print(f"$274C Search API失敗: {e}")
+        return []
+
+    articles = []
+    for item in items[:1]:  # 1件だけ処理
+        title_en = item["title"]
+        article_url = item["link"]
+        print(f"$D83D$DD17 URL取得: {article_url}")
+        full_text = get_page_text_with_selenium(article_url)
+        if not full_text or len(full_text) < 300:
+            print(f"$26A0$FE0F 無効または短すぎるページ: {article_url}")
+            continue
+        rewritten = rewrite_with_comments(full_text)
+        wrapped = insert_html_wrappers(title_en, article_url, rewritten)
+        title_ja = translate_title_to_japanese(title_en)
+        final_title = f"『{title_ja}』を委員長ちゃんが解説♪"
+        articles.append({
+            "title": final_title,
+            "url": article_url,
+            "content": wrapped
+        })
+
+    return articles
