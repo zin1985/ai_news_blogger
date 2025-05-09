@@ -4,13 +4,32 @@ from bs4 import BeautifulSoup
 
 def get_page_text(url):
     try:
-        res = requests.get(url, timeout=10, headers={"User-Agent": "Mozilla/5.0"})
+        headers = {
+            "User-Agent": (
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/122.0.0.0 Safari/537.36"
+            )
+        }
+        res = requests.get(url, headers=headers, timeout=10)
+        if res.status_code != 200 or len(res.text) < 500:
+            print(f"⚠️ 無効または短すぎるページ: {url}")
+            return ""
+
         soup = BeautifulSoup(res.text, "html.parser")
-        # 本文らしき段落を抽出
-        paragraphs = [p.get_text() for p in soup.find_all("p")]
-        return "\n".join(paragraphs[:10])  # 最初の10段落をまとめる
+
+        # 本文抽出：pタグ → article内のテキスト → fallback
+        paragraphs = soup.find_all("p")
+        if not paragraphs:
+            paragraphs = soup.select("article p")
+        if not paragraphs:
+            paragraphs = soup.find_all("div")
+
+        text = "\n".join(p.get_text() for p in paragraphs)
+        return text.strip()
+
     except Exception as e:
-        print(f"⚠️ {url} の取得に失敗しました:", e)
+        print(f"⚠️ {url} の取得エラー:", e)
         return ""
 
 def get_latest_ai_news():
