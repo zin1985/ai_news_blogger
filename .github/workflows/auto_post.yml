@@ -16,6 +16,7 @@ jobs:
       BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
       BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
       GIST_ID: ${{ secrets.GIST_ID }}
+      GIST_PAT: ${{ secrets.GIST_PAT }}
       GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - uses: actions/checkout@v3
