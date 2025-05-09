@@ -11,7 +11,7 @@ def post_article(title, content, url):
         client_secret=os.environ.get("BLOGGER_CLIENT_SECRET")
     )
     service = build('blogger', 'v3', credentials=creds)
-    blog_id = "YOUR_BLOG_ID"  # 自分のブログIDに置き換えてください
+    blog_id = "7990898328410672454"  # 自分のブログIDに置き換えてください
 
     post = {
         "kind": "blogger#post",
