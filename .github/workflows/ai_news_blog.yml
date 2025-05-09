@@ -1,0 +1,40 @@
+
+name: Auto AI News Blogger with Emotions
+
+on:
+  schedule:
+    - cron: '0 9 * * *'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      SEARCH_API_KEY: ${{ secrets.SEARCH_API_KEY }}
+      SEARCH_ENGINE_ID: ${{ secrets.SEARCH_ENGINE_ID }}
+      BLOGGER_CLIENT_ID: ${{ secrets.BLOGGER_CLIENT_ID }}
+      BLOGGER_CLIENT_SECRET: ${{ secrets.BLOGGER_CLIENT_SECRET }}
+      BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
+      GIST_ID: ${{ secrets.GIST_ID }}
+      GIST_PAT: ${{ secrets.GIST_PAT }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
+      - name: Setup Chrome
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget unzip xvfb libxi6 libgconf-2-4 libnss3 libxss1 libappindicator1 libindicator7
+          sudo apt-get install -y chromium-browser chromium-chromedriver
+          export PATH=$PATH:/usr/lib/chromium-browser/
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run script
+        run: python src/main.py
