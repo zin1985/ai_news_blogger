@@ -33,7 +33,7 @@ def get_page_text_with_selenium(url):
         driver.quit()
 
 def detect_emotion(comment):
-    prompt = f"以下の日本語の文から、感情を1単語で英語で分類してください（happy, angry, sad, surprised, confused, love, neutralのいずれか）。感情名だけを出力してください：\n\n"{comment}""
+    prompt = f"以下の日本語の文から、感情を1単語で英語で分類してください（happy, angry, sad, surprised, confused, love, neutralのいずれか）。感情名だけを出力してください：\\n\\n\"{comment}\""
     res = client.chat.completions.create(
         model="gpt-4",
         messages=[
