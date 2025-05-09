@@ -1,22 +1,26 @@
 
 from search_news import get_latest_ai_news
 from post_to_blogger import post_article
-from gist_utils import load_posted_urls_from_gist, save_posted_urls_to_gist
+import time
+from datetime import datetime
 
 def main():
+    print("🔄 処理開始: ", datetime.now())
+    total_start = time.time()
+
+    print("🔍 AIニュース取得中...")
+    start = time.time()
     articles = get_latest_ai_news()
-    posted_urls = load_posted_urls_from_gist()
+    print(f"✅ ニュース取得完了：{len(articles)}件（{time.time() - start:.1f}秒）")
 
     for article in articles:
-        if article["url"] in posted_urls:
-            print(f"🟡 スキップ: {article['title']}")
-            continue
-
-        print(f"🟢 投稿: {article['title']}")
+        print(f"📝 投稿開始: {article['title']}")
+        post_start = time.time()
         post_article(title=article['title'], content=article['content'], url=article['url'])
-        posted_urls.add(article["url"])
-        save_posted_urls_to_gist(posted_urls)
-        break
+        print(f"✅ 投稿完了（{time.time() - post_start:.1f}秒）")
+
+    print("🏁 全投稿完了")
+    print(f"🕒 合計処理時間：{time.time() - total_start:.1f}秒")
 
 if __name__ == "__main__":
     main()
