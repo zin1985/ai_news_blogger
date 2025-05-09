@@ -1,8 +1,6 @@
 name: Auto AI News Blogger with Gist
 
 on:
-  schedule:
-    - cron: '0 8 * * *'  # JST 17:00 相当
   workflow_dispatch:
 
 jobs:
