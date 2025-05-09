@@ -35,8 +35,7 @@ def get_page_text(url):
 def get_latest_ai_news():
     api_key = os.environ.get("SEARCH_API_KEY")
     engine_id = os.environ.get("SEARCH_ENGINE_ID")
-    query = "AI news site:news.google.com"
-
+    query = "AI news site:bbc.com OR site:reuters.com OR site:wired.com"
     url = f"https://www.googleapis.com/customsearch/v1?q={query}&key={api_key}&cx={engine_id}"
     res = requests.get(url)
     if res.status_code != 200:
