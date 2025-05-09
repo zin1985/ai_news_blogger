@@ -126,14 +126,15 @@ def get_latest_ai_news():
         return []
 
     articles = []
-    for item in items[:1]:  # 1件だけ処理
+    for item in items:
         title_en = item["title"]
         article_url = item["link"]
         print(f"$D83D$DD17 URL取得: {article_url}")
         full_text = get_page_text_with_selenium(article_url)
         if not full_text or len(full_text) < 300:
-            print(f"$26A0$FE0F 無効または短すぎるページ: {article_url}")
+            print(f"⚠️ 無効または短すぎるページ: {article_url}")
             continue
+    
         rewritten = rewrite_with_comments(full_text)
         wrapped = insert_html_wrappers(title_en, article_url, rewritten)
         title_ja = translate_title_to_japanese(title_en)
@@ -143,5 +144,5 @@ def get_latest_ai_news():
             "url": article_url,
             "content": wrapped
         })
-
+    break  # 最初に有効な記事を見つけたらループ終了
     return articles
