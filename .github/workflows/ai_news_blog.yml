@@ -16,6 +16,7 @@ jobs:
       BLOGGER_REFRESH_TOKEN: ${{ secrets.BLOGGER_REFRESH_TOKEN }}
       GIST_ID: ${{ secrets.GIST_ID }}
       GIST_PAT: ${{ secrets.GIST_PAT }}
+      BLOG_ID: ${{ secrets.BLOG_ID }}
     steps:
       - uses: actions/checkout@v3
 
