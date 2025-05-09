@@ -1,5 +1,5 @@
 
-name: Auto AI News Blogger with Emotions
+name: Auto AI News Blogger with Emotions (Stable)
 
 on:
   schedule:
@@ -26,12 +26,12 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Setup Chrome
+      - name: Install Chromium and ChromeDriver
         run: |
           sudo apt-get update
-          sudo apt-get install -y wget unzip xvfb libnss3 libxss1 fonts-liberation libatk-bridge2.0-0 libatk1.0-0
-          sudo apt-get install -y chromium-browser chromium-chromedriver
-          export PATH=$PATH:/usr/lib/chromium-browser/
+          sudo apt-get install -y chromium-browser chromium-driver
+          echo "Installed chromium at: $(which chromium-browser)"
+          echo "Installed chromedriver at: $(which chromium-driver)"
 
       - name: Install dependencies
         run: pip install -r requirements.txt
