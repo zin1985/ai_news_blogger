@@ -4,9 +4,6 @@ from post_to_blogger import post_article
 import time
 from datetime import datetime
 
-def post_article(title, content, url):
-    print(f"📤 投稿: {title}\nURL: {url}\n内容（省略）")
-
 def main():
     print("🔄 処理開始: ", datetime.now())
     total_start = time.time()
