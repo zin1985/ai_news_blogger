@@ -144,5 +144,5 @@ def get_latest_ai_news():
             "url": article_url,
             "content": wrapped
         })
-    break  # 最初に有効な記事を見つけたらループ終了
+        break  # 最初に有効な記事を見つけたらループ終了
     return articles
