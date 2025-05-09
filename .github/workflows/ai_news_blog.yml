@@ -50,7 +50,8 @@ jobs:
           # Google Chrome 安定版を直接インストール
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
           sudo dpkg -i google-chrome-stable_current_amd64.deb || true  # 一旦エラーを無視して継続
-          sudo apt-get install -fy  # 不足依存を補う
+          sudo apt-get install -fy
+          echo "✅ Chrome installation step completed"
           
           # Chromeのバージョンに合ったChromeDriverを取得
           CHROME_VERSION=$(google-chrome --version | grep -oP '\\d+\\.\\d+\\.\\d+')
