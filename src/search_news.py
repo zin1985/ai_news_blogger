@@ -15,6 +15,7 @@ SEARCH_API_KEY = os.environ.get("SEARCH_API_KEY")
 SEARCH_ENGINE_ID = os.environ.get("SEARCH_ENGINE_ID")
 
 def get_page_text_with_selenium(url):
+    from selenium import webdriver
     from selenium.webdriver.chrome.options import Options
     from selenium.webdriver.common.by import By
     from selenium.webdriver.support.ui import WebDriverWait
@@ -23,7 +24,7 @@ def get_page_text_with_selenium(url):
     import traceback
 
     options = Options()
-    options.add_argument("--headless")  # ← new で落ちる場合は old headless に変更
+    options.add_argument("--headless")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-gpu")
     options.add_argument("--disable-dev-shm-usage")
@@ -31,38 +32,43 @@ def get_page_text_with_selenium(url):
 
     driver = None
     try:
-        print("🔧 STEP 1: Creating Chrome WebDriver instance...")
+        print("🔧 STEP 1: Starting Chrome...")
         driver = webdriver.Chrome(options=options)
-        print("✅ STEP 1 OK: Chrome WebDriver started")
+        print("✅ STEP 1 OK: Chrome started")
 
-        print(f"🔧 STEP 2: Navigating to URL: {url}")
+        print(f"🔧 STEP 2: Accessing URL: {url}")
         driver.get(url)
-        print("✅ STEP 2 OK: Page loaded")
 
-        print("🔧 STEP 3: Waiting for <p> elements...")
+        print("🔧 STEP 3: Waiting for base content (article/body)...")
         WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.TAG_NAME, "p"))
+            EC.presence_of_element_located(
+                (By.CSS_SELECTOR, "article, div[class*='content'], body")
+            )
         )
 
-        print("🔧 STEP 4: Extracting text from <p> elements...")
+        print("⌛ JS描画を待ってから本文取得へ...")
+        time.sleep(3)  # JS描画待機
+
+        print("🔧 STEP 4: Extracting text from <p> elements")
         paragraphs = driver.find_elements(By.TAG_NAME, "p")
         text = "\n".join([p.text for p in paragraphs if p.text.strip()])
+
         print(f"🧾 抽出文字数: {len(text)}\n{text[:300]}...")
         return text.strip()[:4000]
 
     except Exception as e:
-        print("⚠️ Selenium取得失敗（例外発生）:")
+        print("⚠️ Selenium取得失敗:")
         traceback.print_exc()
         return ""
 
     finally:
         if driver:
             try:
-                print("🔧 STEP 5: Quitting Chrome WebDriver...")
+                print("🔧 STEP 5: Quitting Chrome...")
                 driver.quit()
-                print("✅ STEP 5 OK: Chrome WebDriver quit")
+                print("✅ STEP 5 OK: Chrome quit")
             except Exception as quit_err:
-                print(f"⚠️ driver.quit() でエラー: {quit_err}")
+                print(f"⚠️ driver.quit() failed: {quit_err}")
 
 def detect_emotion(comment):
     prompt = f"以下の日本語の文から、感情を1単語で英語で分類してください（happy, angry, sad, surprised, confused, love, neutralのいずれか）。感情名だけを出力してください：\n\n\"{comment}\""
