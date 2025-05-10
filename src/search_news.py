@@ -16,15 +16,27 @@ def get_page_text_with_playwright(url):
     try:
         with sync_playwright() as p:
             browser = p.chromium.launch(headless=True)
-            page = browser.new_page()
-            page.goto(url, timeout=60000)
-            page.wait_for_selector("article, body", timeout=10000)
 
-            # ページ全体から inner_text を取得
-            content = page.inner_text("article") if page.query_selector("article") else page.inner_text("body")
+            # ✅ モバイルブラウザ風の環境を構築（UA偽装＋viewport指定＋is_mobile）
+            context = browser.new_context(
+                user_agent="Mozilla/5.0 (iPhone; CPU iPhone OS 16_0 like Mac OS X) "
+                           "AppleWebKit/605.1.15 (KHTML, like Gecko) "
+                           "Version/16.0 Mobile/15E148 Safari/604.1",
+                viewport={"width": 375, "height": 667},
+                is_mobile=True,
+                device_scale_factor=2
+            )
+
+            page = context.new_page()
+            page.goto(url, timeout=60000)
+            page.wait_for_timeout(5000)  # JS描画の余裕を確保
+
+            # ✅ モバイル表示では body の inner_text をまるごと取得
+            content = page.inner_text("body")
             print(f"🧾 抽出文字数: {len(content)}\n{content[:300]}...")
             browser.close()
             return content.strip()[:4000]
+
     except Exception as e:
         print(f"⚠️ Playwright取得失敗: {e}")
         return ""
