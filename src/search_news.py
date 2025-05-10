@@ -120,7 +120,7 @@ def insert_html_wrappers(title, url, body):
     return "\n".join(new_lines)
 
 def get_latest_ai_news():
-    query = "OpenAI FDA AI site:reuters.com OR site:cnn.com OR site:nytimes.com OR site:bbc.com"
+    query = "OpenAI FDA AI site:cnn.com OR site:nytimes.com OR site:bbc.com"
     url = f"https://www.googleapis.com/customsearch/v1?key={SEARCH_API_KEY}&cx={SEARCH_ENGINE_ID}&q={query}"
 
     try:
