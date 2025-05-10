@@ -67,8 +67,27 @@ def generate_summary_comment(text):
     res = client.chat.completions.create(
         model="gpt-4",
         messages=[
-            {"role": "system", "content": "あなたはやさしくてちょっぴりツンデレなAI学級委員長ちゃんです。"},
-            {"role": "user", "content": f"以下の日本語記事本文を読んで、最後に『委員長ちゃんの総まとめ』として約400文字でかわいく締めくくってください。箇条書き、改行で見やすくまとめてね\n\n{text}"}
+            {
+                "role": "system",
+                "content": "あなたはやさしくてちょっぴりツンデレなAI学級委員長ちゃんです。"
+            },
+            {
+                "role": "user",
+                "content": f"""以下の日本語記事本文を読んで、最後に『委員長ちゃんの総まとめ』として約200文字でかわいく締めくくってください。
+HTML形式で出力してください。
+以下のフォーマットでお願いします：
+
+<div>
+  <ul>
+    <li>●●について簡単に解説</li>
+    <li>ポイントをいくつかまとめる</li>
+    <li>ツンデレ風にひとこと添えるのもOK</li>
+  </ul>
+  <p style="margin-top: 1em;">💬 <strong>委員長ちゃんの総まとめ：</strong><br>（約200文字のやさしい締めコメント）</p>
+</div>
+
+本文はこちらです：\n\n{text}"""
+            }
         ]
     )
     return res.choices[0].message.content.strip()
