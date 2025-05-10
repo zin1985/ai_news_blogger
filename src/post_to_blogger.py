@@ -34,6 +34,17 @@ def get_blogger_service():
     }, scopes=["https://www.googleapis.com/auth/blogger"])
     return build('blogger', 'v3', credentials=creds)
 
+def trim_labels_to_fit(labels, max_total_length=200):
+    result = []
+    total = 0
+    for label in labels:
+        length = len(label.encode("utf-8"))
+        if total + length + 2 > max_total_length:  # +2 for separator margin
+            break
+        result.append(label)
+        total += length
+    return result
+
 def post_article(title, content, url):
     service = get_blogger_service()
     blog_id = os.environ.get("BLOG_ID")
@@ -41,6 +52,7 @@ def post_article(title, content, url):
     # キーワード抽出（絵文字含む本文で）
     keywords = extract_keywords_from_text(content)
     labels = list(set(keywords + ["委員長ちゃん"]))
+    labels = trim_labels_to_fit(labels)  # ←ここで制限！
 
     post = {
         "title": title,
