@@ -8,8 +8,8 @@ client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 def extract_keywords_from_text(text):
     prompt = (
-        "以下の日本語の文章から、内容に関連する自然なキーワードを3〜5個、日本語で抽出してください。"
-        "カンマ区切りで1行にまとめて出力してください（例：AI, 環境, 思考力）。"
+        "Extract 3 to 5 relevant natural keywords from the following Japanese text. "
+        "Return them in one line, separated by commas (e.g., AI, 環境, 思考力).\n\n" + text
     )
     try:
         res = client.chat.completions.create(
