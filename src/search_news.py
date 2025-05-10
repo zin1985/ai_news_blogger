@@ -37,17 +37,12 @@ def get_page_text_with_selenium(url):
 
         print(f"🔧 STEP 2: Accessing URL: {url}")
         driver.get(url)
-        time.sleep(3)  # JS描画待ち
+        time.sleep(5)  # JS描画を待つ（長め）
 
-        print("🔧 STEP 3: Extracting page source")
-        html = driver.page_source
-        soup = BeautifulSoup(html, 'html.parser')
-
-        print("🔧 STEP 4: Parsing all <p> tags")
-        paragraphs = soup.find_all('p')
-        text = "\n".join(p.get_text(strip=True) for p in paragraphs)
-        print(f"🧾 抽出文字数: {len(text)}\n{text[:300]}...")
-        return text.strip()[:4000]
+        print("🔧 STEP 3: Executing JS to get full innerText")
+        body_text = driver.execute_script("return document.body.innerText;")
+        print(f"🧾 抽出文字数: {len(body_text)}\n{body_text[:300]}...")
+        return body_text.strip()[:4000]
 
     except Exception as e:
         print("⚠️ Selenium取得失敗:")
