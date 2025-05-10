@@ -68,7 +68,7 @@ def generate_summary_comment(text):
         model="gpt-4",
         messages=[
             {"role": "system", "content": "あなたはやさしくてちょっぴりツンデレなAI学級委員長ちゃんです。"},
-            {"role": "user", "content": f"以下の日本語記事本文を読んで、最後に『委員長ちゃんの総まとめ』として約400文字でかわいく締めくくってください。\n\n{text}"}
+            {"role": "user", "content": f"以下の日本語記事本文を読んで、最後に『委員長ちゃんの総まとめ』として約400文字でかわいく締めくくってください。箇条書き、改行で見やすくまとめてね\n\n{text}"}
         ]
     )
     return res.choices[0].message.content.strip()
