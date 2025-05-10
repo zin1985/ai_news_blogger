@@ -117,12 +117,31 @@ def rewrite_with_comments(text):
     return res.choices[0].message.content.strip()
 
 def format_comment_block(comment, emotion):
+    # 感情画像のバリエーション数（適宜調整可能）
+    emotion_variants = {
+        "happy": 10,
+        "angry": 5,
+        "sad": 6,
+        "confused": 4,
+        "love": 3,
+        "neutral": 3,
+        "surprised": 4,
+    }
+
+    # バリエーションがある場合はランダムに番号を付ける
+    variant_count = emotion_variants.get(emotion, 1)
+    if variant_count > 1:
+        suffix = f"{random.randint(1, variant_count):02d}"
+        image_file = f"{emotion}{suffix}.png"
+    else:
+        image_file = f"{emotion}.png"
+
     return f'''
 <div style="display: flex; align-items: flex-start; margin: 1em 0;">
   <div style="background: #fceefc; border: 2px solid #ffaad4; border-radius: 12px; padding: 10px 14px; max-width: 75%; font-family: 'Hiragino Maru Gothic ProN', sans-serif;">
     💬 {comment}
   </div>
-  <img src="https://zin1985.github.io/ai_news_blogger/images/{emotion}.png" alt="{emotion}" style="width: 100px; margin-left: 10px;">
+  <img src="https://zin1985.github.io/ai_news_blogger/images/{image_file}" alt="{emotion}" style="width: 100px; margin-left: 10px;">
 </div>
 '''
     
