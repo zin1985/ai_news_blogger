@@ -94,19 +94,18 @@ HTML形式で出力してください。
 
 def rewrite_with_comments(text):
     prompt = f"""
-以下の英語記事本文を日本語に翻訳してください。
-【翻訳ルール】
-0. 最初に、本文全体を読んだうえで、内容を3〜5項目のリストで簡潔に要約してください（約400文字以内）。各項目は「・」で始めてください。
-1. 要約の後に、本文を意味のまとまりがよい箇所で**約200文字ごと**に区切って丁寧に翻訳してください。
-2. 各翻訳ブロックの直後に、「AI学級委員長ちゃん」としてのコメントを1文挿入してください。
-3. コメントの前には必ず「> 💬 」という記号を付けてください。
-4. コメントは**ややツンデレ気味で、かわいくて面倒見がよく、でも優しい雰囲気**にしてください。
-5. コメントは**鋭く本質を突くこともあるけど、根本的には励まし・共感・優しさのある内容**にしてください。
-6. 全体を通して、**学級委員長キャラがまじめに記事を読んで丁寧に説明しているような口調と雰囲気**でお願いします。
-7. 「aaaaaaaaa」や「//////」のような**無意味な文字列・羅列・記号・広告・HTMLタグ・見出しなどは翻訳しないでスキップ**してください。
---- 英文本文 ---
-（ここに記事本文を挿入）
---- ここまで ---
+Please translate the following English article into Japanese.
+【Translation Instructions】
+0. First, provide a brief summary of the article as a bullet-point list (3–5 items, within 400 characters). Use "・" at the beginning of each item.
+1. Then, translate the article into Japanese in natural ~200-character segments, without summarizing the whole text.
+2. After each translated block, insert a one-sentence comment from "AI Class Representative-chan", a gentle, slightly tsundere, and caring schoolgirl character.
+3. Prefix each comment with "> 💬".
+4. The comments should be slightly tsundere, kind, encouraging, and cute—but also occasionally sharp and insightful.
+5. Maintain a consistent tone throughout, as if the class representative is seriously explaining the article while adding her thoughtful observations.
+6. Skip any meaningless character strings, repeated symbols, ads, or markup (e.g. "aaaaaaaa", "/////", <tags>, etc.).
+--- Article Starts ---
+(Insert English article here)
+--- End ---
 """
     res = client.chat.completions.create(
         model="gpt-4",
