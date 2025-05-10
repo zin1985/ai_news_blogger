@@ -6,12 +6,9 @@
     { "site": "nhk.or.jp", "lang": "ja" },
     { "site": "gigazine.net", "lang": "ja" },
     { "site": "itmedia.co.jp", "lang": "ja" },
-    { "site": "note.com", "lang": "ja" },
     { "site": "hatena.ne.jp", "lang": "ja" },
-    { "site": "cnn.com", "lang": "en" },
     { "site": "bbc.com", "lang": "en" },
     { "site": "nytimes.com", "lang": "en" },
-    { "site": "theguardian.com", "lang": "en" },
     { "site": "wired.com", "lang": "en" },
     { "site": "cnet.com", "lang": "en" }
   ]
