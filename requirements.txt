@@ -1,5 +1,6 @@
 
 openai>=1.0.0
+beautifulsoup4
 requests
 selenium
 google-api-python-client
