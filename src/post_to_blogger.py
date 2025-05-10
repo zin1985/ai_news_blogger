@@ -32,7 +32,7 @@ def get_blogger_service():
 
 def post_article(title, content, url):
     service = get_blogger_service()
-    blog_id = os.environ.get("7990898328410672454")
+    blog_id = os.environ.get("BLOG_ID")
 
     keywords = extract_keywords_from_text(content)
     labels = list(set(keywords + ["委員長ちゃん"]))
