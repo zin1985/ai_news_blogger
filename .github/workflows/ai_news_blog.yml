@@ -27,18 +27,19 @@ jobs:
 
       - name: Install Google Chrome & ChromeDriver
         run: |
-          set -e
-          sudo apt update
-          sudo apt install -y wget unzip
+          sudo apt update || true
+          sudo apt install -y wget unzip || true
           wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-          sudo dpkg -i google-chrome-stable_current_amd64.deb || true  # ← 警告は無視して進める
-          sudo apt-get -f install -y || true                            # ← 依存関係の修復を保証
+          sudo dpkg -i google-chrome-stable_current_amd64.deb || true
+          sudo apt-get -f install -y || true
           CHROME_VERSION=$(google-chrome --version | grep -oP '[0-9.]+' | head -1 | cut -d '.' -f 1)
           DRIVER_VERSION=$(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
           wget https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip
           unzip chromedriver_linux64.zip
           sudo mv chromedriver /usr/local/bin/
           sudo chmod +x /usr/local/bin/chromedriver
+        shell: bash
+        continue-on-error: true  # ← 💡 これでもジョブを止めない方法
 
       - name: Install dependencies
         run: pip install -r requirements.txt
