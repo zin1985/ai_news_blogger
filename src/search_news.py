@@ -14,12 +14,11 @@ client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 SEARCH_API_KEY = os.environ.get("SEARCH_API_KEY")
 SEARCH_ENGINE_ID = os.environ.get("SEARCH_ENGINE_ID")
 
+from bs4 import BeautifulSoup
+
 def get_page_text_with_selenium(url):
     from selenium import webdriver
     from selenium.webdriver.chrome.options import Options
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions as EC
     import time
     import traceback
 
@@ -38,21 +37,15 @@ def get_page_text_with_selenium(url):
 
         print(f"🔧 STEP 2: Accessing URL: {url}")
         driver.get(url)
+        time.sleep(3)  # JS描画待ち
 
-        print("🔧 STEP 3: Waiting for base content (article/body)...")
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located(
-                (By.CSS_SELECTOR, "article, div[class*='content'], body")
-            )
-        )
+        print("🔧 STEP 3: Extracting page source")
+        html = driver.page_source
+        soup = BeautifulSoup(html, 'html.parser')
 
-        print("⌛ JS描画を待ってから本文取得へ...")
-        time.sleep(3)  # JS描画待機
-
-        print("🔧 STEP 4: Extracting text from <p> elements")
-        paragraphs = driver.find_elements(By.TAG_NAME, "p")
-        text = "\n".join([p.text for p in paragraphs if p.text.strip()])
-
+        print("🔧 STEP 4: Parsing all <p> tags")
+        paragraphs = soup.find_all('p')
+        text = "\n".join(p.get_text(strip=True) for p in paragraphs)
         print(f"🧾 抽出文字数: {len(text)}\n{text[:300]}...")
         return text.strip()[:4000]
 
@@ -64,7 +57,6 @@ def get_page_text_with_selenium(url):
     finally:
         if driver:
             try:
-                print("🔧 STEP 5: Quitting Chrome...")
                 driver.quit()
                 print("✅ STEP 5 OK: Chrome quit")
             except Exception as quit_err:
