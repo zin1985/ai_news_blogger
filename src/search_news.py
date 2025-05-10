@@ -98,7 +98,7 @@ def format_comment_block(comment, emotion):
     return f'''
 <div style="display: flex; align-items: flex-start; margin: 1em 0;">
   <div style="background: #fceefc; border: 2px solid #ffaad4; border-radius: 12px; padding: 10px 14px; max-width: 75%; font-family: 'Hiragino Maru Gothic ProN', sans-serif;">
-    $D83D$DCAC {comment}
+    💬 {comment}
   </div>
   <img src="https://zin1985.github.io/ai_news_blogger/images/{emotion}.png" alt="{emotion}" style="width: 100px; margin-left: 10px;">
 </div>
