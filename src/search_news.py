@@ -44,7 +44,7 @@ def get_page_text_with_playwright(url):
         return ""
 
 def detect_emotion(comment):
-    prompt = f"以下の日本語の文から、感情を1単語で英語で分類してください（happy, angry, sad, surprised, confused, love, neutralのいずれか）。感情名だけを出力してください：\n\n\"{comment}\""
+    prompt = f"Please classify the emotion of the following Japanese sentence in one English word (happy, angry, sad, surprised, confused, love, neutral). Output only the emotion:\n\n\"{comment}\""
     try:
         res = client.chat.completions.create(
             model="gpt-3.5-turbo",
