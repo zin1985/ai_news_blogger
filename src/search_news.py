@@ -15,15 +15,21 @@ SEARCH_API_KEY = os.environ.get("SEARCH_API_KEY")
 SEARCH_ENGINE_ID = os.environ.get("SEARCH_ENGINE_ID")
 
 def get_page_text_with_selenium(url):
+    from selenium.webdriver.chrome.options import Options
+    from selenium.webdriver.common.by import By
+    from selenium.webdriver.support.ui import WebDriverWait
+    from selenium.webdriver.support import expected_conditions as EC
+    import time
+    import tempfile
+
     options = Options()
-    options.add_argument("--headless")
-    options.add_argument("--disable-gpu")
+    options.add_argument("--headless=new")  # ← 新APIが安定！
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--disable-software-rasterizer")
-    # options.binary_location = "/usr/bin/chromium-browser"
+    options.add_argument("--disable-gpu")
+    options.add_argument("--window-size=1920,1080")
 
-    # ✅ 一時的なプロファイルディレクトリを使う
+    # 一時的なユーザーディレクトリを使うことで競合回避
     user_data_dir = tempfile.mkdtemp()
     options.add_argument(f"--user-data-dir={user_data_dir}")
 
@@ -39,11 +45,9 @@ def get_page_text_with_selenium(url):
         text = "\n".join([p.text for p in paragraphs if p.text.strip()])
         print(f"🧾 抽出文字数: {len(text)}\n{text[:300]}...")
         return text.strip()[:4000]
-
     except Exception as e:
         print(f"⚠️ Selenium取得失敗: {e}")
         return ""
-
     finally:
         driver.quit()
 
