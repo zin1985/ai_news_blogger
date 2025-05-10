@@ -20,26 +20,19 @@ def get_page_text_with_selenium(url):
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
     import time
-    import tempfile
 
     options = Options()
-    options.add_argument("--headless=new")  # ← 新APIが安定！
+    options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
     options.add_argument("--window-size=1920,1080")
-
-    # 一時的なユーザーディレクトリを使うことで競合回避
-    user_data_dir = tempfile.mkdtemp()
-    options.add_argument(f"--user-data-dir={user_data_dir}")
-
-    driver = webdriver.Chrome(options=options)
+    # ✅ user-data-dir 削除！
 
     try:
+        driver = webdriver.Chrome(options=options)
         driver.get(url)
-        WebDriverWait(driver, 10).until(
-            EC.presence_of_element_located((By.TAG_NAME, "p"))
-        )
+        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "p")))
         time.sleep(1)
         paragraphs = driver.find_elements(By.TAG_NAME, "p")
         text = "\n".join([p.text for p in paragraphs if p.text.strip()])
@@ -49,7 +42,10 @@ def get_page_text_with_selenium(url):
         print(f"⚠️ Selenium取得失敗: {e}")
         return ""
     finally:
-        driver.quit()
+        try:
+            driver.quit()
+        except:
+            pass
 
 def detect_emotion(comment):
     prompt = f"以下の日本語の文から、感情を1単語で英語で分類してください（happy, angry, sad, surprised, confused, love, neutralのいずれか）。感情名だけを出力してください：\n\n\"{comment}\""
