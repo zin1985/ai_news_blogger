@@ -25,12 +25,18 @@ jobs:
         with:
           python-version: '3.x'
 
-      - name: Install Chromium and ChromeDriver
+      - name: Install Google Chrome & ChromeDriver
         run: |
-          sudo apt-get update
-          sudo apt-get install -y chromium-browser chromium-driver
-          echo "Installed chromium at: $(which chromium-browser)"
-          echo "Installed chromedriver at: $(which chromium-driver)"
+          sudo apt update
+          sudo apt install -y wget unzip
+          wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
+          sudo dpkg -i google-chrome-stable_current_amd64.deb || sudo apt-get -f install -y
+          CHROME_VERSION=$(google-chrome --version | grep -oP '[0-9.]+' | head -1 | cut -d '.' -f 1)
+          DRIVER_VERSION=$(wget -qO- https://chromedriver.storage.googleapis.com/LATEST_RELEASE_$CHROME_VERSION)
+          wget https://chromedriver.storage.googleapis.com/$DRIVER_VERSION/chromedriver_linux64.zip
+          unzip chromedriver_linux64.zip
+          sudo mv chromedriver /usr/local/bin/
+          sudo chmod +x /usr/local/bin/chromedriver
 
       - name: Install dependencies
         run: pip install -r requirements.txt
