@@ -3,6 +3,8 @@ import os
 import requests
 import time
 import tempfile
+import json
+import random
 from openai import OpenAI
 from bs4 import BeautifulSoup
 from playwright.sync_api import sync_playwright
@@ -101,6 +103,14 @@ def format_comment_block(comment, emotion):
   <img src="https://zin1985.github.io/ai_news_blogger/images/{emotion}.png" alt="{emotion}" style="width: 100px; margin-left: 10px;">
 </div>
 '''
+    
+def get_random_site_query(keyword="OpenAI FDA AI", json_path="news_sources.json", k=3):
+    with open(json_path, "r") as f:
+        data = json.load(f)
+        sources = data["sources"]
+        selected = random.sample(sources, k=min(k, len(sources)))  # 最大k件ランダムに選択
+        site_query = " OR ".join(f"site:{s}" for s in selected)
+        return f"{keyword} {site_query}"
 
 def insert_html_wrappers(title, url, body):
     lines = body.splitlines()
@@ -120,7 +130,7 @@ def insert_html_wrappers(title, url, body):
     return "\n".join(new_lines)
 
 def get_latest_ai_news():
-    query = "OpenAI FDA AI site:cnn.com OR site:nytimes.com OR site:bbc.com"
+    query = get_random_site_query()  # ← 動的に検索クエリを生成（任意）
     url = f"https://www.googleapis.com/customsearch/v1?key={SEARCH_API_KEY}&cx={SEARCH_ENGINE_ID}&q={query}"
 
     try:
@@ -131,7 +141,6 @@ def get_latest_ai_news():
         print(f"❌ Search API失敗: {e}")
         return []
 
-    articles = []
     for item in items[:20]:
         title_en = item["title"]
         article_url = item["link"]
@@ -141,14 +150,15 @@ def get_latest_ai_news():
         if not full_text or len(full_text) < 300:
             print(f"⚠️ 無効または短すぎるページ: {article_url}")
             continue
+
         rewritten = rewrite_with_comments(full_text)
         wrapped = insert_html_wrappers(title_en, article_url, rewritten)
         title_ja = translate_title_to_japanese(title_en)
         final_title = f"『{title_ja}』を委員長ちゃんが解説♪"
-        articles.append({
+        return [{
             "title": final_title,
             "url": article_url,
             "content": wrapped
-        })
+        }]
 
-    return articles
+    return []  # 1件も有効記事がなかった場合
