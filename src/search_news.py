@@ -29,7 +29,7 @@ def get_page_text_with_selenium(url):
         # 本文候補をすべて<p>タグで取得
         paragraphs = driver.find_elements(By.TAG_NAME, "p")
         text = "\n".join([p.text for p in paragraphs if p.text.strip()])
-
+        print(f"🧾 抽出文字数: {len(text)}\n{text[:300]}...")  # ← ログに本文プレビュー出す
         return text.strip()[:4000]  # 4000文字まで制限（安全のため）
 
     except Exception as e:
