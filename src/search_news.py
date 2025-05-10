@@ -3,20 +3,13 @@ import os
 import requests
 import time
 import tempfile
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
 from openai import OpenAI
+from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
 
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 SEARCH_API_KEY = os.environ.get("SEARCH_API_KEY")
 SEARCH_ENGINE_ID = os.environ.get("SEARCH_ENGINE_ID")
-
-from bs4 import BeautifulSoup
-
-from playwright.sync_api import sync_playwright
 
 def get_page_text_with_playwright(url):
     print(f"🌐 [Playwright] アクセス開始: {url}")
