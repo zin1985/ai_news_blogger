@@ -21,7 +21,7 @@ def get_page_text_with_selenium(url):
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-software-rasterizer")
-    options.binary_location = "/usr/bin/chromium-browser"
+    # options.binary_location = "/usr/bin/chromium-browser"
 
     # ✅ 一時的なプロファイルディレクトリを使う
     user_data_dir = tempfile.mkdtemp()
