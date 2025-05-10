@@ -8,6 +8,8 @@ from selenium.webdriver.common.by import By
 from openai import OpenAI
 
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+SEARCH_API_KEY = os.environ.get("SEARCH_API_KEY")
+SEARCH_ENGINE_ID = os.environ.get("SEARCH_ENGINE_ID")
 
 def get_page_text_with_selenium(url):
     options = Options()
