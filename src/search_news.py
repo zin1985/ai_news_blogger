@@ -19,16 +19,23 @@ def get_page_text_with_selenium(url):
     options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-software-rasterizer")
     options.binary_location = "/usr/bin/chromium-browser"
+
     driver = webdriver.Chrome(options=options)
+
     try:
         driver.get(url)
-        time.sleep(3)
+        time.sleep(3)  # JSで本文が描画されるまで待機（必要に応じて調整）
+
+        # 本文候補をすべて<p>タグで取得
         paragraphs = driver.find_elements(By.TAG_NAME, "p")
-        text = "\n".join([p.text for p in paragraphs])
-        return text.strip()[:4000]
+        text = "\n".join([p.text for p in paragraphs if p.text.strip()])
+
+        return text.strip()[:4000]  # 4000文字まで制限（安全のため）
+
     except Exception as e:
-        print(f"$26A0$FE0F Selenium取得失敗: {e}")
+        print(f"⚠️ Selenium取得失敗: {e}")
         return ""
+
     finally:
         driver.quit()
 
