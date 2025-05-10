@@ -18,8 +18,6 @@ def extract_keywords_from_text(text):
             messages=[{"role": "user", "content": prompt}]
         )
         content = res.choices[0].message.content.strip()
-        # 念のためJSON化される前にUnicodeエスケープを戻す（防御策）
-        content = bytes(content, "utf-8").decode("unicode_escape", errors="ignore")
         return [kw.strip() for kw in content.split(",") if kw.strip()]
     except Exception as e:
         print(f"⚠️ キーワード抽出失敗: {e}")
