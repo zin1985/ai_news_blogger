@@ -149,7 +149,7 @@ def load_json(path):
     with open(path, "r", encoding="utf-8") as f:
         return json.load(f)
 
-def get_random_query(source_path="news_sources.json", ja_kw_path="search_keywords_ja.json", en_kw_path="search_keywords_en.json", k_sites=10):
+def get_random_query(source_path="news_sources.json", ja_kw_path="search_keywords_ja.json", en_kw_path="search_keywords_en.json", k_sites=6):
     # サイト一覧を読み込む
     sources = load_json(source_path)["sources"]
 
