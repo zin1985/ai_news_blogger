@@ -104,13 +104,38 @@ def format_comment_block(comment, emotion):
 </div>
 '''
     
-def get_random_site_query(keyword="OpenAI FDA AI", json_path="news_sources.json", k=3):
-    with open(json_path, "r") as f:
-        data = json.load(f)
-        sources = data["sources"]
-        selected = random.sample(sources, k=min(k, len(sources)))  # 最大k件ランダムに選択
-        site_query = " OR ".join(f"site:{s}" for s in selected)
-        return f"{keyword} {site_query}"
+def load_json(path):
+    with open(path, "r", encoding="utf-8") as f:
+        return json.load(f)
+
+def get_random_query(source_path="news_sources.json", ja_kw_path="search_keywords_ja.json", en_kw_path="search_keywords_en.json", k_sites=3):
+    # サイト一覧を読み込む
+    sources = load_json(source_path)["sources"]
+
+    # ランダムにk個選択（サイトと言語付き）
+    selected = random.sample(sources, k=min(k_sites, len(sources)))
+    langs = list(set(site["lang"] for site in selected))
+
+    # キーワードを対応する言語からランダムに選ぶ（優先：単一言語）
+    if len(langs) == 1:
+        lang = langs[0]
+    else:
+        lang = random.choice(langs)
+
+    if lang == "ja":
+        keyword_list = load_json(ja_kw_path)["keywords"]
+    else:
+        keyword_list = load_json(en_kw_path)["keywords"]
+
+    keyword = random.choice(keyword_list)
+    site_query = " OR ".join(f"site:{site['site']}" for site in selected)
+    final_query = f"{keyword} {site_query}"
+
+    print(f"🌐 言語: {lang}")
+    print(f"🔍 キーワード: {keyword}")
+    print(f"🔗 サイト: {[s['site'] for s in selected]}")
+    print(f"📎 検索クエリ: {final_query}")
+    return final_query
 
 def insert_html_wrappers(title, url, body):
     lines = body.splitlines()
@@ -130,7 +155,7 @@ def insert_html_wrappers(title, url, body):
     return "\n".join(new_lines)
 
 def get_latest_ai_news():
-    query = get_random_site_query()  # ← 動的に検索クエリを生成（任意）
+    query = get_random_query()  # ← ランダムに構成された検索式
     url = f"https://www.googleapis.com/customsearch/v1?key={SEARCH_API_KEY}&cx={SEARCH_ENGINE_ID}&q={query}"
 
     try:
