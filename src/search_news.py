@@ -132,7 +132,7 @@ def get_latest_ai_news():
         return []
 
     articles = []
-    for item in items[:10]:
+    for item in items[:20]:
         title_en = item["title"]
         article_url = item["link"]
         print(f"🔗 URL取得: {article_url}")
