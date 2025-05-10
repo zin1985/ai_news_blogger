@@ -13,7 +13,7 @@ SEARCH_ENGINE_ID = os.environ.get("SEARCH_ENGINE_ID")
 
 def get_page_text_with_selenium(url):
     options = Options()
-    options.add_argument("--headless")
+    # options.add_argument("--headless")  # 開発中は外す
     options.add_argument("--disable-gpu")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
@@ -24,13 +24,14 @@ def get_page_text_with_selenium(url):
 
     try:
         driver.get(url)
-        time.sleep(3)  # JSで本文が描画されるまで待機（必要に応じて調整）
-
-        # 本文候補をすべて<p>タグで取得
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.TAG_NAME, "p"))
+        )
+        time.sleep(1)  # DOM安定化のため追いsleep
         paragraphs = driver.find_elements(By.TAG_NAME, "p")
         text = "\n".join([p.text for p in paragraphs if p.text.strip()])
-        print(f"🧾 抽出文字数: {len(text)}\n{text[:300]}...")  # ← ログに本文プレビュー出す
-        return text.strip()[:4000]  # 4000文字まで制限（安全のため）
+        print(f"🧾 抽出文字数: {len(text)}\n{text[:300]}...")
+        return text.strip()[:4000]
 
     except Exception as e:
         print(f"⚠️ Selenium取得失敗: {e}")
