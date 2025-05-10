@@ -9,16 +9,16 @@ client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 def extract_keywords_from_text(text):
     prompt = (
         "以下の日本語の文章から、内容に関連する自然なキーワードを3〜5個、日本語で抽出してください。"
-        "絵文字（例：💬や📘）が含まれる場合は、文字コードや$D83D$DCACのような形式ではなく、**絵文字そのものをそのまま表示してください。**\n\n"
-        + text
+        "カンマ区切りで1行にまとめて出力してください（例：AI, 環境, 思考力）。"
     )
     try:
         res = client.chat.completions.create(
             model="gpt-3.5-turbo",
-            messages=[{"role": "user", "content": prompt}]
+            messages=[{"role": "user", "content": prompt + "\n\n" + text}]
         )
-        content = res.choices[0].message.content.strip()
-        return [kw.strip() for kw in content.split(",") if kw.strip()]
+        raw = res.choices[0].message.content.strip()
+        keywords = [kw.strip() for kw in raw.replace("・", ",").split(",") if kw.strip()]
+        return keywords
     except Exception as e:
         print(f"⚠️ キーワード抽出失敗: {e}")
         return ["AI", "ニュース"]
