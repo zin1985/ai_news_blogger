@@ -16,46 +16,25 @@ SEARCH_ENGINE_ID = os.environ.get("SEARCH_ENGINE_ID")
 
 from bs4 import BeautifulSoup
 
-def get_page_text_with_selenium(url):
-    from selenium import webdriver
-    from selenium.webdriver.chrome.options import Options
-    import time
-    import traceback
+from playwright.sync_api import sync_playwright
 
-    options = Options()
-    options.add_argument("--headless")
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-gpu")
-    options.add_argument("--disable-dev-shm-usage")
-    options.add_argument("--window-size=1920,1080")
-
-    driver = None
+def get_page_text_with_playwright(url):
+    print(f"🌐 [Playwright] アクセス開始: {url}")
     try:
-        print("🔧 STEP 1: Starting Chrome...")
-        driver = webdriver.Chrome(options=options)
-        print("✅ STEP 1 OK: Chrome started")
+        with sync_playwright() as p:
+            browser = p.chromium.launch(headless=True)
+            page = browser.new_page()
+            page.goto(url, timeout=60000)
+            page.wait_for_selector("article, body", timeout=10000)
 
-        print(f"🔧 STEP 2: Accessing URL: {url}")
-        driver.get(url)
-        time.sleep(5)  # JS描画を待つ（長め）
-
-        print("🔧 STEP 3: Executing JS to get full innerText")
-        body_text = driver.execute_script("return document.body.innerText;")
-        print(f"🧾 抽出文字数: {len(body_text)}\n{body_text[:300]}...")
-        return body_text.strip()[:4000]
-
+            # ページ全体から inner_text を取得
+            content = page.inner_text("article") if page.query_selector("article") else page.inner_text("body")
+            print(f"🧾 抽出文字数: {len(content)}\n{content[:300]}...")
+            browser.close()
+            return content.strip()[:4000]
     except Exception as e:
-        print("⚠️ Selenium取得失敗:")
-        traceback.print_exc()
+        print(f"⚠️ Playwright取得失敗: {e}")
         return ""
-
-    finally:
-        if driver:
-            try:
-                driver.quit()
-                print("✅ STEP 5 OK: Chrome quit")
-            except Exception as quit_err:
-                print(f"⚠️ driver.quit() failed: {quit_err}")
 
 def detect_emotion(comment):
     prompt = f"以下の日本語の文から、感情を1単語で英語で分類してください（happy, angry, sad, surprised, confused, love, neutralのいずれか）。感情名だけを出力してください：\n\n\"{comment}\""
@@ -152,7 +131,7 @@ def get_latest_ai_news():
         title_en = item["title"]
         article_url = item["link"]
         print(f"🔗 URL取得: {article_url}")
-        full_text = get_page_text_with_selenium(article_url)
+        full_text = get_page_text_with_playwright(article_url)
         print(f"🔗 本文取得: {full_text}")
         if not full_text or len(full_text) < 300:
             print(f"⚠️ 無効または短すぎるページ: {article_url}")
