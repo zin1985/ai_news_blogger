@@ -119,13 +119,13 @@ def rewrite_with_comments(text):
 def format_comment_block(comment, emotion):
     # 感情画像のバリエーション数（適宜調整可能）
     emotion_variants = {
-        "happy": 10,
-        "angry": 5,
-        "sad": 6,
-        "confused": 4,
-        "love": 3,
-        "neutral": 3,
-        "surprised": 4,
+        "happy": 1,
+        "angry": 1,
+        "sad": 1,
+        "confused": 1,
+        "love": 1,
+        "neutral": 1,
+        "surprised": 1,
     }
 
     # バリエーションがある場合はランダムに番号を付ける
