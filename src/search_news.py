@@ -20,32 +20,49 @@ def get_page_text_with_selenium(url):
     from selenium.webdriver.support.ui import WebDriverWait
     from selenium.webdriver.support import expected_conditions as EC
     import time
+    import traceback
 
     options = Options()
-    options.add_argument("--headless=new")
+    options.add_argument("--headless")  # ← new で落ちる場合は old headless に変更
     options.add_argument("--no-sandbox")
-    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--disable-gpu")
+    options.add_argument("--disable-dev-shm-usage")
     options.add_argument("--window-size=1920,1080")
-    # ✅ user-data-dir 削除！
 
+    driver = None
     try:
+        print("🔧 STEP 1: Creating Chrome WebDriver instance...")
         driver = webdriver.Chrome(options=options)
+        print("✅ STEP 1 OK: Chrome WebDriver started")
+
+        print(f"🔧 STEP 2: Navigating to URL: {url}")
         driver.get(url)
-        WebDriverWait(driver, 10).until(EC.presence_of_element_located((By.TAG_NAME, "p")))
-        time.sleep(1)
+        print("✅ STEP 2 OK: Page loaded")
+
+        print("🔧 STEP 3: Waiting for <p> elements...")
+        WebDriverWait(driver, 10).until(
+            EC.presence_of_element_located((By.TAG_NAME, "p"))
+        )
+
+        print("🔧 STEP 4: Extracting text from <p> elements...")
         paragraphs = driver.find_elements(By.TAG_NAME, "p")
         text = "\n".join([p.text for p in paragraphs if p.text.strip()])
         print(f"🧾 抽出文字数: {len(text)}\n{text[:300]}...")
         return text.strip()[:4000]
+
     except Exception as e:
-        print(f"⚠️ Selenium取得失敗: {e}")
+        print("⚠️ Selenium取得失敗（例外発生）:")
+        traceback.print_exc()
         return ""
+
     finally:
-        try:
-            driver.quit()
-        except:
-            pass
+        if driver:
+            try:
+                print("🔧 STEP 5: Quitting Chrome WebDriver...")
+                driver.quit()
+                print("✅ STEP 5 OK: Chrome WebDriver quit")
+            except Exception as quit_err:
+                print(f"⚠️ driver.quit() でエラー: {quit_err}")
 
 def detect_emotion(comment):
     prompt = f"以下の日本語の文から、感情を1単語で英語で分類してください（happy, angry, sad, surprised, confused, love, neutralのいずれか）。感情名だけを出力してください：\n\n\"{comment}\""
