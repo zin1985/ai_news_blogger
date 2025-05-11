@@ -119,13 +119,13 @@ Please translate the following English article into Japanese.
 def format_comment_block(comment, emotion):
     # 感情画像のバリエーション数（適宜調整可能）
     emotion_variants = {
-        "happy": 1,
-        "angry": 1,
-        "sad": 1,
-        "confused": 1,
-        "love": 1,
-        "neutral": 1,
-        "surprised": 1,
+        "happy": 2,
+        "angry": 3,
+        "sad": 2,
+        "confused": 2,
+        "love": 2,
+        "neutral": 2,
+        "surprised": 2,
     }
 
     # バリエーションがある場合はランダムに番号を付ける
